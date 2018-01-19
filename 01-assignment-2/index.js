@@ -2,7 +2,7 @@ console.log('Week 1 Assignment 2: Data Import, Parse, and Discovery');
 
 function parse(d){
 	/**
-	1.0 
+	1.0
 	YOUR CODE HERE
 	Complete the parse function to import the trips dataset with the appropriate types and property names
 	Each trip should be represented as following
@@ -16,7 +16,15 @@ function parse(d){
 		subsc_type: "subsc_type" of type String
 	}
 	**/
-	return d; //MODIFY THIS
+	return {
+		station0: d.strt_statn,
+		station1: d.end_statn,
+		t0: new Date(d.start_date),
+		t1: new Date(d.end_date),
+		bike_nr: d.bike_nr,
+		duration: +d.duration,
+		subsc_type: d.subsc_type
+	}; //MODIFY THIS
 }
 
 d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
@@ -26,19 +34,20 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 
 	/***
 	2.0 Discovering min, max, mean, median
-	
+
 	2.1 What is the duration in seconds of the longest trip?
 	Hint: use d3.max()
-	YOUR CODE HERE:
 	***/
-	const longestDuration = undefined; //MODIFY THIS
-	console.log(`Longest trip duration is ${longestDuration}`);
+	console.log('There are ' + trips.length + ' trips.');
+	console.log(`There are ${trips.length} trips.`); // same as the line above
+
+	const longestDuration = d3.max(trips, function(d){ return d.duration });
+	console.log(`Longest trip duration is ${longestDuration/3600} hours`);
 
 	/***
 	2.2 What about the shortest trip?
-	YOUR CODE HERE:
 	***/
-	const shortestDuration = undefined; //MODIFY THIS
+	const shortestDuration = d3.min(trips, function(d){ return d.duration });
 	console.log(`Shortest trip duration is ${shortestDuration}`);
 
 	/***
@@ -52,13 +61,13 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 
 	/***
 	3.0 Filter, sort, map, slice
-	
+
 	3.1 Let's separate all the trips into those taken by registered vs casual users
 	Hint: use Array.prototype.filter
 	YOUR CODE HERE:
 	***/
-	const registeredTrips = trips.filter(/*MODIFY THIS*/);
-	const casualTrips = trips.filter(/*MODIFY THIS*/);
+	const registeredTrips = trips.filter(function(d){ return d.subsc_type === 'Registered' });
+	const casualTrips = trips.filter(function(d){ return d.subsc_type === 'Casual' });
 	console.log(registeredTrips);
 	console.log(casualTrips);
 	console.log(registeredTrips === trips); //As you can see, Array.prototype.filter produces an entirely new array
@@ -68,7 +77,7 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	Hint: use Array.prototype.sort
 	YOUR CODE HERE:
 	***/
-	const sortedRegisteredTrips = registeredTrips.sort(/*MODIFY THIS*/);
+	const sortedRegisteredTrips = registeredTrips.sort(function(a,b){ return b.duration - a.duration });
 	console.log(registeredTrips);
 	console.log(sortedRegisteredTrips);
 	console.log(registeredTrips === sortedRegisteredTrips);
@@ -96,12 +105,12 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	Again, does Array.prototype.map create a new array, or modify existing arrays in place?
 	YOUR CODE HERE:
 	***/
-	const departureTimestamps = trips.map(/*MODIFY THIS*/);
+	const departureTimestamps = trips.map(function(d){ return d.t0 });
 	console.log(departureTimestamps);
 
 	/***
 	4.0 Nest
-	
+
 	4.1 Create a nested array, where trips are nested by departure station (i.e. station0)
 	YOUR CODE HERE:
 	***/
@@ -119,5 +128,5 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
-	
+
 });
